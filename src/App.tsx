@@ -19,38 +19,33 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (): Promise<void> => {
     if (!file) {
       setMessage("Please select a file first!");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("file", file);
-
-    setUploading(true);
-    setProgress(10); // Initial progress
-
+  
     try {
-      const res = await axios.post<{ message: string }>("http://localhost:9000/upload", formData, {
+      const res = await axios.post<{ message: string }>("http://localhost:9000/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-            setProgress(percent);
-          }
-        },
       });
-
+  
       setMessage(res.data.message);
-      setProgress(100);
-    } catch (error) {
-      setMessage("Upload failed. Please try again.");
-      setProgress(0);
-    } finally {
-      setUploading(false);
+      setFile(null);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setMessage("Upload failed: " + (error.response?.data?.message || "Unknown error"));
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
+      console.error("Upload Error:", error);
     }
   };
+  
+  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
