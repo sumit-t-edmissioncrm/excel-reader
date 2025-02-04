@@ -28,8 +28,13 @@ router.post("/upload", upload.single("file"), async (req, res) => {
         fs.unlinkSync(filePath);
         res.json({ success: true, message: "Data saved to MongoDB!" });
       } catch (error) {
+        fs.unlinkSync(filePath);
         console.error("Database Insert Error:", error);
-        res.status(500).json({ success: false, message: error.message });
+        // res.json({ success: false, message: error.message });
+        res.json({
+          success: false,
+          message: "Error: Proper formantt is required in CSV file!",
+        });
       }
     })
     .on("error", (err) => {

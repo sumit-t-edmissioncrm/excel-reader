@@ -48,7 +48,7 @@ const App: React.FC = () => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post<{ message: string }>(
+      const res = await axios.post<{ message: string,success: boolean }>(
         "http://localhost:9000/api/upload",
         formData,
         {
@@ -59,6 +59,14 @@ const App: React.FC = () => {
           },
         }
       );
+      if (!res.data.success) {
+        setMessage(res.data.message);
+        setFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        return;
+      }
 
       setMessage(res.data.message);
       setFile(null);
@@ -153,7 +161,7 @@ const App: React.FC = () => {
           {message && (
             <div
               className={`mt-4 flex items-center ${
-                message.includes("failed") || message.includes("Please select") || message.includes("allowed") || message.includes("exceeds")
+                message.includes("failed") || message.includes("Please select") || message.includes("allowed") || message.includes("exceeds") || message.includes("Error")
                   ? "text-red-500"
                   : "text-green-500"
               }`}
