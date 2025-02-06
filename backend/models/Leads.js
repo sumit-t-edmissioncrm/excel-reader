@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 
-const leadSchema = new mongoose.Schema(
+const UniversityHierarchySchema = new mongoose.Schema(
   {
     id: { type: String, required: true },
     name: { type: String, required: true },
-    class: { type: String, required: true },
-    gender: { type: String, required: true },
+    type: { type: String, required: true },
+    parent: { type: String, required: true },
   },
   { timestamps: true }
 );
 
-const Leads = mongoose.model("Leads", leadSchema);
+const Hierarchy = mongoose.model("Hierarchy", UniversityHierarchySchema);
 
-module.exports = Leads;
+module.exports = Hierarchy;
